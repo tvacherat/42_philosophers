@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_one.c                                        :+:      :+:    :+:   */
+/*   philo.c                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tvachera <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/01 15:18:19 by tvachera          #+#    #+#             */
-/*   Updated: 2021/06/07 16:01:52 by tvachera         ###   ########.fr       */
+/*   Updated: 2021/06/22 11:15:08 by tvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_one.h"
+#include "philo.h"
 
 bool	check_meals(t_philo *philos, unsigned int nb_philos, long nb_meals)
 {
@@ -48,7 +48,7 @@ bool	watch_threads(t_pars *pars, t_philo *philos, unsigned int nb_philos,
 	i = 0;
 	while (*philos->stop == false)
 	{
-		ft_sleep(8);
+		ft_sleep(4);
 		check_death(philos, nb_philos);
 		if (*philos->stop == false && pars->nb_meals > 0
 			&& check_meals(philos, nb_philos, pars->nb_meals))

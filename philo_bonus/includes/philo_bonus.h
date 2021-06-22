@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_one.h                                        :+:      :+:    :+:   */
+/*   philo_bonus.h                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tvachera <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/05/26 12:06:31 by tvachera          #+#    #+#             */
-/*   Updated: 2021/06/07 16:00:44 by tvachera         ###   ########.fr       */
+/*   Created: 2021/06/07 12:44:47 by tvachera          #+#    #+#             */
+/*   Updated: 2021/06/17 14:28:17 by tvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_ONE_H
-# define PHILO_ONE_H
+#ifndef PHILO_BONUS_H
+# define PHILO_BONUS_H
 
 # include <unistd.h>
 # include <stdlib.h>
@@ -20,9 +20,18 @@
 # include <stdio.h>
 # include <sys/time.h>
 # include <stdbool.h>
+# include <semaphore.h>
+# include <sys/stat.h>
+# include <sys/wait.h>
+# include <sys/types.h>
+# include <fcntl.h>
+# include <signal.h>
 
 # define LEFT 0
 # define RIGHT 1
+# define IS_DEAD 0
+# define ATE_ENOUGH 1
+# define ERR 2
 
 typedef struct s_pars
 {
@@ -36,15 +45,17 @@ typedef struct s_pars
 typedef struct s_philo
 {
 	size_t			name;
-	bool			*stop;
 	long			nb_meals;
+	bool			*stop;
 	t_pars			*pars;
-	pthread_mutex_t	*fork[2];
-	pthread_mutex_t	*print;
-	pthread_mutex_t	lunch;
+	sem_t			*forks;
+	sem_t			*print;
+	sem_t			*lunch;
+	sem_t			*sync;
+	char			*lunch_name;
 	size_t			last_meal;
 	struct timeval	ts;
-	pthread_t		thread;
+	int				pid;
 }	t_philo;
 
 /*
@@ -53,29 +64,26 @@ typedef struct s_philo
 int				main(int argc, char **argv);
 
 /*
-** time.c
+** utils.c
 */
+void			unlock_sync(sem_t *sync, unsigned int nb_philos);
 size_t			get_time(void);
 void			ft_sleep(size_t ms);
 
 /*
-**	philo_one.c
+**	philo_bonus.c
 */
-bool			check_death(t_philo *philos, unsigned int nb_philos);
-bool			check_meals(t_philo *philos, unsigned int nb_philos,
-					long nb_meals);
-void			set_philos(t_philo *philos, t_pars *pars,
-					pthread_mutex_t *forks, pthread_mutex_t *print);
-bool			watch_threads(t_pars *pars, t_philo *philos,
-					unsigned int nb_philos, pthread_mutex_t *forks);
-bool			launch_threads(t_pars *pars, pthread_mutex_t *forks,
-					pthread_mutex_t *print);
+void			kill_children(t_philo *philos, unsigned int nb_philos);
+bool			watch_children(t_philo *philos, unsigned int nb_philos);
+void			process(t_philo *philo);
+bool			set_philos(t_philo *philos, t_pars *pars, sem_t *print);
+bool			launch_children(t_pars *pars, sem_t *print);
 
 /*
 **	check.c
 */
 int				ft_strcmp(const char *s1, const char *s2);
-int				ft_strlen(char *str);
+int				ft_strlen(const char *str);
 bool			only_numbers(char *str);
 unsigned int	pars_nbr(char *nbr);
 bool			check_args(int argc, char **argv, t_pars *pars);
@@ -83,13 +91,8 @@ bool			check_args(int argc, char **argv, t_pars *pars);
 /*
 **	forks.c
 */
-void			unlock_forks(pthread_mutex_t *forks, unsigned int nb_philos);
-bool			take_forks(t_philo *philo, pthread_mutex_t *forkl,
-					pthread_mutex_t *forkr);
-pthread_mutex_t	*init_forks(t_pars *pars);
-void			destroy_forks(pthread_mutex_t *forks, t_pars *pars);
-void			get_forks(t_philo *philo, size_t index, pthread_mutex_t *forks,
-					unsigned int nb_philo);
+bool			take_forks(t_philo *philo);
+sem_t			*init_forks(t_pars *pars);
 
 /*
 **	lifetime.c
@@ -99,5 +102,15 @@ bool			is_dead(t_philo *philo);
 bool			fall_asleep(t_philo *philo);
 bool			eat(t_philo *philo);
 void			*live(void *arg);
+
+/*
+**	ft_strjoin.c
+*/
+char			*ft_strjoin(char const *s1, char const *s2);
+
+/*
+**	ft_itoa.c
+*/
+char			*ft_itoa(int n);
 
 #endif

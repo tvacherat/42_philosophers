@@ -1,16 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_three.c                                      :+:      :+:    :+:   */
+/*   philo_bonus.c                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tvachera <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/07 12:45:26 by tvachera          #+#    #+#             */
-/*   Updated: 2021/06/07 17:31:30 by tvachera         ###   ########.fr       */
+/*   Updated: 2021/06/22 11:17:43 by tvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_three.h"
+#include "philo_bonus.h"
 
 void	kill_children(t_philo *philos, unsigned int nb_philos)
 {
@@ -73,7 +73,7 @@ void	process(t_philo *philo)
 		exit(ERR);
 	while (42)
 	{
-		ft_sleep(8);
+		ft_sleep(4);
 		if (is_dead(philo))
 			exit(IS_DEAD);
 		else if (philo->pars->nb_meals > 0

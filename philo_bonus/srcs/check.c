@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_three.h"
+#include "philo_bonus.h"
 
 int	ft_strcmp(const char *s1, const char *s2)
 {

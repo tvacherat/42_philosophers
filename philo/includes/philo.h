@@ -1,17 +1,17 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   philo_two.h                                        :+:      :+:    :+:   */
+/*   philo.h                                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tvachera <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2021/06/04 11:26:32 by tvachera          #+#    #+#             */
-/*   Updated: 2021/06/07 16:08:19 by tvachera         ###   ########.fr       */
+/*   Created: 2021/05/26 12:06:31 by tvachera          #+#    #+#             */
+/*   Updated: 2021/06/18 11:34:05 by tvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef PHILO_TWO_H
-# define PHILO_TWO_H
+#ifndef PHILO_H
+# define PHILO_H
 
 # include <unistd.h>
 # include <stdlib.h>
@@ -20,9 +20,6 @@
 # include <stdio.h>
 # include <sys/time.h>
 # include <stdbool.h>
-# include <semaphore.h>
-# include <sys/stat.h>
-# include <fcntl.h>
 
 # define LEFT 0
 # define RIGHT 1
@@ -42,10 +39,9 @@ typedef struct s_philo
 	bool			*stop;
 	long			nb_meals;
 	t_pars			*pars;
-	sem_t			*forks;
-	sem_t			*print;
-	sem_t			*lunch;
-	char			*lunch_name;
+	pthread_mutex_t	*fork[2];
+	pthread_mutex_t	*print;
+	pthread_mutex_t	lunch;
 	size_t			last_meal;
 	struct timeval	ts;
 	pthread_t		thread;
@@ -57,28 +53,29 @@ typedef struct s_philo
 int				main(int argc, char **argv);
 
 /*
-** utils.c
+** time.c
 */
-bool			check_meals(t_philo *philos, unsigned int nb_philos,
-					long nb_meals);
-bool			check_death(t_philo *philos, unsigned int nb_philos);
 size_t			get_time(void);
 void			ft_sleep(size_t ms);
 
 /*
-**	philo_two.c
+**	philo.c
 */
-bool			join_threads(t_philo *philos, unsigned int nb_philos);
+bool			check_death(t_philo *philos, unsigned int nb_philos);
+bool			check_meals(t_philo *philos, unsigned int nb_philos,
+					long nb_meals);
+void			set_philos(t_philo *philos, t_pars *pars,
+					pthread_mutex_t *forks, pthread_mutex_t *print);
 bool			watch_threads(t_pars *pars, t_philo *philos,
-					unsigned int nb_philos);
-bool			set_philos(t_philo *philos, t_pars *pars, sem_t *print);
-bool			launch_threads(t_pars *pars, sem_t *print);
+					unsigned int nb_philos, pthread_mutex_t *forks);
+bool			launch_threads(t_pars *pars, pthread_mutex_t *forks,
+					pthread_mutex_t *print);
 
 /*
 **	check.c
 */
 int				ft_strcmp(const char *s1, const char *s2);
-int				ft_strlen(const char *str);
+int				ft_strlen(char *str);
 bool			only_numbers(char *str);
 unsigned int	pars_nbr(char *nbr);
 bool			check_args(int argc, char **argv, t_pars *pars);
@@ -86,8 +83,13 @@ bool			check_args(int argc, char **argv, t_pars *pars);
 /*
 **	forks.c
 */
-bool			take_forks(t_philo *philo);
-sem_t			*init_forks(t_pars *pars);
+void			unlock_forks(pthread_mutex_t *forks, unsigned int nb_philos);
+bool			take_forks(t_philo *philo, pthread_mutex_t *forkl,
+					pthread_mutex_t *forkr);
+pthread_mutex_t	*init_forks(t_pars *pars);
+void			destroy_forks(pthread_mutex_t *forks, t_pars *pars);
+void			get_forks(t_philo *philo, size_t index, pthread_mutex_t *forks,
+					unsigned int nb_philo);
 
 /*
 **	lifetime.c
@@ -97,15 +99,5 @@ bool			is_dead(t_philo *philo);
 bool			fall_asleep(t_philo *philo);
 bool			eat(t_philo *philo);
 void			*live(void *arg);
-
-/*
-**	ft_strjoin.c
-*/
-char			*ft_strjoin(char const *s1, char const *s2);
-
-/*
-**	ft_iota.c
-*/
-char			*ft_itoa(int n);
 
 #endif

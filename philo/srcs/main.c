@@ -6,16 +6,17 @@
 /*   By: tvachera <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/26 12:07:06 by tvachera          #+#    #+#             */
-/*   Updated: 2021/06/07 15:06:45 by tvachera         ###   ########.fr       */
+/*   Updated: 2021/06/03 19:00:02 by tvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_three.h"
+#include "philo.h"
 
 int	main(int argc, char **argv)
 {
 	t_pars			pars;
-	sem_t			*print;
+	pthread_mutex_t	*forks;
+	pthread_mutex_t	print;
 	int				ret;
 
 	ret = 0;
@@ -29,11 +30,11 @@ int	main(int argc, char **argv)
 		printf("Everyone ate well, even though no one ate\n");
 		return (0);
 	}
-	sem_unlink("print");
-	print = sem_open("print", O_CREAT, S_IRWXU | S_IRWXG, 1);
-	if (!launch_children(&pars, print))
+	forks = init_forks(&pars);
+	pthread_mutex_init(&print, NULL);
+	if (!forks || !launch_threads(&pars, forks, &print))
 		ret = 1;
-	sem_close(print);
-	sem_unlink("print");
+	destroy_forks(forks, &pars);
+	pthread_mutex_destroy(&print);
 	return (ret);
 }

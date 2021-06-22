@@ -10,7 +10,7 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_one.h"
+#include "philo.h"
 
 void	unlock_forks(pthread_mutex_t *forks, unsigned int nb_philos)
 {

@@ -6,38 +6,22 @@
 /*   By: tvachera <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/03 18:58:13 by tvachera          #+#    #+#             */
-/*   Updated: 2021/06/04 12:14:48 by tvachera         ###   ########.fr       */
+/*   Updated: 2021/06/07 15:48:18 by tvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_two.h"
+#include "philo_bonus.h"
 
-bool	check_meals(t_philo *philos, unsigned int nb_philos, long nb_meals)
+void	unlock_sync(sem_t *sync, unsigned int nb_philos)
 {
 	size_t	i;
 
 	i = 0;
 	while (i < nb_philos)
 	{
-		if (philos[i].nb_meals < nb_meals)
-			return (false);
+		sem_post(sync);
 		i++;
 	}
-	return (true);
-}
-
-bool	check_death(t_philo *philos, unsigned int nb_philos)
-{
-	size_t	i;
-
-	i = 0;
-	while (i < nb_philos)
-	{
-		if (is_dead(&philos[i]))
-			return (true);
-		i++;
-	}
-	return (false);
 }
 
 size_t	get_time(void)

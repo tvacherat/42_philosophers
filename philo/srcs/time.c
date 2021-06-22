@@ -1,39 +1,35 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strjoin.c                                       :+:      :+:    :+:   */
+/*   time.c                                             :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: tvachera <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2020/11/16 16:20:21 by tvachera          #+#    #+#             */
-/*   Updated: 2021/06/07 12:31:40 by tvachera         ###   ########.fr       */
+/*   Created: 2021/06/03 18:58:13 by tvachera          #+#    #+#             */
+/*   Updated: 2021/06/03 18:58:36 by tvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_three.h"
+#include "philo.h"
 
-char	*ft_strjoin(char const *s1, char const *s2)
+size_t	get_time(void)
 {
-	size_t	i;
-	size_t	j;
-	char	*join;
+	struct timeval	tp;
+	size_t			milliseconds;
 
-	i = 0;
-	j = 0;
-	if (!s1 || !s2)
-		return (0);
-	join = malloc(sizeof(char) * (ft_strlen(s1) + ft_strlen(s2) + 1));
-	if (!join)
-		return (0);
-	while (s1[i])
-	{
-		join[j] = s1[i];
-		j++;
-		i++;
-	}
-	i = 0;
-	while (s2[i])
-		join[j++] = s2[i++];
-	join[j] = 0;
-	return (join);
+	gettimeofday(&tp, NULL);
+	milliseconds = tp.tv_sec * 1000;
+	milliseconds += tp.tv_usec / 1000;
+	return (milliseconds);
+}
+
+void	ft_sleep(size_t ms)
+{
+	size_t	curr;
+	size_t	end;
+
+	curr = get_time();
+	end = curr + ms;
+	while (get_time() < end)
+		usleep(100);
 }

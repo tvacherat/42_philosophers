@@ -1,4 +1,4 @@
-NAME		=	philo_three
+NAME		=	philo
 CC			=	clang
 CFLAGS		=	-Wall -Wextra -Werror
 RM			=	rm -rf

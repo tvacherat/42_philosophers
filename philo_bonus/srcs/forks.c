@@ -6,11 +6,11 @@
 /*   By: tvachera <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/05/28 13:02:26 by tvachera          #+#    #+#             */
-/*   Updated: 2021/06/08 15:01:33 by tvachera         ###   ########.fr       */
+/*   Updated: 2021/06/08 15:02:01 by tvachera         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "philo_two.h"
+#include "philo_bonus.h"
 
 bool	take_forks(t_philo *philo)
 {
@@ -36,6 +36,6 @@ sem_t	*init_forks(t_pars *pars)
 	sem_t	*forks;
 
 	sem_unlink("forks");
-	forks = sem_open("forks", O_CREAT, S_IRWXU, pars->nb_philo);
+	forks = sem_open("forks", O_CREAT, S_IRWXU | S_IRWXG, pars->nb_philo);
 	return (forks);
 }
